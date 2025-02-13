@@ -4,7 +4,28 @@ const acanvas = document.getElementById("screen")
 const actx = acanvas.getContext("2d")
 
 var display = {startWidth:1920, aspectRatio:[1920,1080], scale:0}
-var player = {x : 192/2, y : 108/2, velX:0, velY:0}
+var player = {x : 192/2, y : 108/2, velX:0, velY:0, targetX : 3}
+var enemies = []
+var enemyTimer = 10000
+
+function SpawnEnemy(){
+    enemies[enemies.length] = {
+        x:Math.floor(Math.random()*5),
+        y:-50,
+        speed: -(Math.random()/3)-.4,
+    }
+}
+function enemyTick(){
+    for(let i = 0; i<enemies.length; i++){
+        enemies[i].y-=enemies[i].speed
+    }
+    enemyTimer++
+    if(enemyTimer>50){
+
+        SpawnEnemy()
+        enemyTimer=0
+    }
+}
 
 window.onerror = function(msg, url, linenumber) {
     alert('Error message: '+msg+'\nURL: '+url+'\nLine Number: '+linenumber);
@@ -13,6 +34,7 @@ window.onerror = function(msg, url, linenumber) {
 function tick(){
     requestAnimationFrame(tick)
     playerTick()
+    enemyTick()
     drawGame()
     transferDraw()
 }
@@ -23,14 +45,29 @@ function playerTick(){
         player.velY+=-4
     }
     if(justPressed(kd.A)){
-        player.velX-=2
+        if(player.targetX>1){
+
+            player.velX-=2
+            player.targetX-=1
+        
+        }
     }
     if(justPressed(kd.D)){
-        player.velX+=2
+        if(player.targetX<5){
+
+            player.velX+=2
+            player.targetX+=1
+    
+        }
     }
     player.y+=player.velY
     player.x+=player.velX
     player.velX*=.95
+
+    if(player.y<14){
+        player.y=14
+        player.velY=0
+    }
 }
 
 function justPressed(KDKEY){
@@ -55,6 +92,11 @@ function drawGame(){
     for(let i = 0; i<5; i++){
 
         actx.fillRect(((192/5)*(i+1))-21,0,3,1000)
+
+    }
+
+    for(let i = 0; i<enemies.length; i++){
+        actx.fillRect(((192/5)*(enemies[i].x+1))-40,enemies[i].y,39,15)
 
     }
     actx.beginPath()
