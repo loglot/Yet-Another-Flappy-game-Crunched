@@ -12,11 +12,29 @@ window.onerror = function(msg, url, linenumber) {
 }
 function tick(){
     requestAnimationFrame(tick)
+    playerTick()
     drawGame()
     transferDraw()
 }
 
 function playerTick(){
+    player.velY += .1
+    player.y+=player.velY
+    if(justPressed(kd.W)){
+        player.velY-=5
+    }
+}
+
+function justPressed(KDKEY){
+    var returns = false
+    if(KDKEY.isDown()){
+        if(!KDKEY.wasDown){
+            returns = true
+        }
+        KDKEY.wasDown = true
+    } else {KDKEY.wasDown = false}
+
+    return(returns)
     
 }
 
