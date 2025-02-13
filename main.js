@@ -19,10 +19,18 @@ function tick(){
 
 function playerTick(){
     player.velY += .1
-    player.y+=player.velY
     if(justPressed(kd.W)){
-        player.velY-=5
+        player.velY+=-4
     }
+    if(justPressed(kd.A)){
+        player.velX-=2
+    }
+    if(justPressed(kd.D)){
+        player.velX+=2
+    }
+    player.y+=player.velY
+    player.x+=player.velX
+    player.velX*=.95
 }
 
 function justPressed(KDKEY){
@@ -43,7 +51,12 @@ function drawGame(){
     actx.clearRect(0,0,1000,1000)
     actx.fillStyle = "rgb(167,199,216)"
     actx.fillRect(0,0,1000,1000)
+    actx.fillStyle = "#33363f"
+    for(let i = 0; i<5; i++){
 
+        actx.fillRect(((192/5)*(i+1))-21,0,3,1000)
+
+    }
     actx.beginPath()
     actx.fillStyle = "#33363f"
     actx.arc(player.x,player.y,12,0,90,false)
@@ -52,6 +65,13 @@ function drawGame(){
     actx.fillStyle = "#afbfaf"
     actx.arc(player.x,player.y,10,0,90,false)
     actx.fill()
+
+
+    actx.fillStyle = "#33363f"
+    actx.fillRect(0,0,3,1000)
+    actx.fillRect(0,0,1000,3)
+    actx.fillRect(191-2,0,1000,1000)
+    actx.fillRect(0,107-2,1000,1000)
 }
 
 function transferDraw(){
