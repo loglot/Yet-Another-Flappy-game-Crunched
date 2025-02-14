@@ -4,8 +4,13 @@ const acanvas = document.getElementById("screen")
 const actx = acanvas.getContext("2d")
 
 var display = {startWidth:1920, aspectRatio:[1920,1080], scale:0}
-var player = {x : 192/2, y : 108/2, velX:0, velY:0, targetX : 3}
-var enemies = []
+var player = {x : 192/2, y : 108/2, velX:0, velY:0, targetX : 3, jumps:3}
+var enemies = [{
+    x:2,
+    y:70,
+    speed: -.1,
+    hitTimer:0
+}]
 var enemyTimer = 10000
 
 function SpawnEnemy(){
@@ -32,6 +37,9 @@ function enemyTick(){
 
             ){
                 player.velY=-2
+                if(player.jumps<3){
+                    player.jumps=3
+                }
             }
             if(
                 player.x > Math.round(((192/5)*(enemies[i].x+1))-40) &&
@@ -94,7 +102,10 @@ function tick(){
 function playerTick(){
     player.velY += .1
     if(justPressed(kd.W)){
-        player.velY+=-4
+        if(player.jumps>0){
+            player.jumps--
+            player.velY+=-4
+        }
     }
     if(justPressed(kd.A)){
         if(player.targetX>1){
