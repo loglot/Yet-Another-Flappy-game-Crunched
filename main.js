@@ -13,11 +13,63 @@ function SpawnEnemy(){
         x:Math.floor(Math.random()*5),
         y:-50,
         speed: -(Math.random()/3)-.4,
+        hitTimer:0
     }
 }
 function enemyTick(){
     for(let i = 0; i<enemies.length; i++){
         enemies[i].y-=enemies[i].speed
+        enemies[i].hitTimer--
+        if(enemies[i].y >= 120){
+            enemies.splice(i,1)
+        }
+        if(enemies[i].hitTimer < 0){
+            if(
+                player.x > Math.round(((192/5)*(enemies[i].x+1))-40) &&
+                player.x < Math.round(((192/5)*(enemies[i].x+1))-1) &&
+                player.y+12 < enemies[i].y +15 &&
+                player.y+12 > enemies[i].y 
+
+            ){
+                player.velY=-2
+            }
+            if(
+                player.x > Math.round(((192/5)*(enemies[i].x+1))-40) &&
+                player.x < Math.round(((192/5)*(enemies[i].x+1))-1) &&
+                player.y-12 < enemies[i].y +15 &&
+                player.y-12 > enemies[i].y 
+
+            ){
+                player.velY=2
+            }
+            if(
+                player.x-12 > Math.round(((192/5)*(enemies[i].x+1))-40) &&
+                player.x-12 < Math.round(((192/5)*(enemies[i].x+1))-1) &&
+                player.y < enemies[i].y +15 &&
+                player.y > enemies[i].y 
+
+            ){
+                if(player.targetX<5){
+                    player.velX+=2
+                    player.targetX+=1
+                    enemies[i].hitTimer = 5
+                }
+            }
+            if(
+                player.x+12 > Math.round(((192/5)*(enemies[i].x+1))-40) &&
+                player.x+12 < Math.round(((192/5)*(enemies[i].x+1))-1) &&
+                player.y < enemies[i].y +15 &&
+                player.y > enemies[i].y 
+
+            ){
+                if(player.targetX>1){
+                    player.velX-=2
+                    player.targetX-=1
+                    enemies[i].hitTimer = 5
+                }
+                
+            }
+        }
     }
     enemyTimer++
     if(enemyTimer>50){
@@ -91,21 +143,21 @@ function drawGame(){
     actx.fillStyle = "#33363f"
     for(let i = 0; i<5; i++){
 
-        actx.fillRect(((192/5)*(i+1))-21,0,3,1000)
+        actx.fillRect(Math.round(((192/5)*(i+1))-21),0,3,1000)
 
     }
 
     for(let i = 0; i<enemies.length; i++){
-        actx.fillRect(((192/5)*(enemies[i].x+1))-40,enemies[i].y,39,15)
+        actx.fillRect(Math.round(((192/5)*(enemies[i].x+1))-40),enemies[i].y,39,15)
 
     }
     actx.beginPath()
     actx.fillStyle = "#33363f"
-    actx.arc(player.x,player.y,12,0,90,false)
+    actx.arc(Math.round(player.x),Math.round(player.y),12,0,90,false)
     actx.fill()
     actx.beginPath()
     actx.fillStyle = "#afbfaf"
-    actx.arc(player.x,player.y,10,0,90,false)
+    actx.arc(Math.round(player.x),Math.round(player.y),10,0,90,false)
     actx.fill()
 
 
