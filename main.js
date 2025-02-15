@@ -4,7 +4,7 @@ const acanvas = document.getElementById("screen")
 const actx = acanvas.getContext("2d")
 
 var display = {startWidth:1920, aspectRatio:[1920,1080], scale:0}
-var player = {x : 192/2, y : 108/2, velX:0, velY:0, targetX : 3, jumps:3}
+var player = {x : 192/2, y : 108/2, velX:0, velY:0, targetX : 3, jumps:2, scoreTimer :0}
 var enemies = [{
     x:2,
     y:70,
@@ -12,6 +12,7 @@ var enemies = [{
     hitTimer:0
 }]
 var enemyTimer = 10000
+var GameState = 0
 
 function SpawnEnemy(){
     enemies[enemies.length] = {
@@ -37,8 +38,8 @@ function enemyTick(){
 
             ){
                 player.velY=-2
-                if(player.jumps<3){
-                    player.jumps=3
+                if(player.jumps<2){
+                    player.jumps=2
                 }
             }
             if(
@@ -86,6 +87,16 @@ function enemyTick(){
         enemyTimer=0
     }
 }
+function reset(){
+     player = {x : 192/2, y : 108/2, velX:0, velY:0, targetX : 3, jumps:2, scoreTimer :0}
+ enemies = [{
+    x:2,
+    y:70,
+    speed: -.1,
+    hitTimer:0
+}]
+ enemyTimer = 10000
+}
 
 window.onerror = function(msg, url, linenumber) {
     alert('Error message: '+msg+'\nURL: '+url+'\nLine Number: '+linenumber);
@@ -93,10 +104,44 @@ window.onerror = function(msg, url, linenumber) {
 }
 function tick(){
     requestAnimationFrame(tick)
-    playerTick()
-    enemyTick()
-    drawGame()
+    if(GameState==1){
+        playerTick()
+        enemyTick()
+        drawGame()
+    } else if(GameState==0){
+        menuTick()
+        drawMenu()
+    }
     transferDraw()
+}
+
+function menuTick(){
+    if(justPressed(kd.W)){
+        reset()
+        GameState=1
+    }
+}
+function drawMenu(){
+
+    actx.clearRect(0,0,1000,1000)
+    actx.fillStyle = "rgb(167,199,216)"
+    actx.fillRect(0,0,1000,1000)
+    actx.fillStyle = "#33363f"
+    actx.fillRect(0,0,3,1000)
+    actx.fillRect(0,0,1000,3)
+    actx.fillRect(191-2,0,1000,1000)
+    actx.fillRect(0,107-2,1000,1000)
+    actx.font = "15px sans-serif";
+    actx.strokeStyle = "#33363f"
+    actx.lineWidth = 5;
+    
+    actx.lineJoin = 'miter';
+    actx.miterLimit = 2
+    actx.strokeText("Yet Another Flappy Game", 10, 20)
+    actx.strokeText("Press W To Start", 10, 45)
+    actx.fillStyle = "#fff"
+    actx.fillText("Yet Another Flappy Game", 10, 20)
+    actx.fillText("Press W To Start", 10, 45)
 }
 
 function playerTick(){
@@ -126,10 +171,17 @@ function playerTick(){
     player.y+=player.velY
     player.x+=player.velX
     player.velX*=.95
+    player.scoreTimer++
+    if(player.scoreTimer>= 100){
+        player.scoreTimer = 0
+    }
 
     if(player.y<14){
         player.y=14
         player.velY=0
+    }
+    if(player.y>140){
+        GameState=0
     }
 }
 
@@ -162,21 +214,55 @@ function drawGame(){
         actx.fillRect(Math.round(((192/5)*(enemies[i].x+1))-40),enemies[i].y,39,15)
 
     }
-    actx.beginPath()
-    actx.fillStyle = "#33363f"
-    actx.arc(Math.round(player.x),Math.round(player.y),12,0,90,false)
-    actx.fill()
-    actx.beginPath()
-    actx.fillStyle = "#afbfaf"
-    actx.arc(Math.round(player.x),Math.round(player.y),10,0,90,false)
-    actx.fill()
 
+    drawPlayer()
 
     actx.fillStyle = "#33363f"
     actx.fillRect(0,0,3,1000)
     actx.fillRect(0,0,1000,3)
     actx.fillRect(191-2,0,1000,1000)
     actx.fillRect(0,107-2,1000,1000)
+}
+
+function drawPlayer(){
+    actx.save()
+    actx.translate(Math.round(player.x),Math.round(player.y))
+    actx.beginPath()
+    actx.fillStyle = "#33363f22"
+    actx.arc(-2,2,12,0,90,false)
+    actx.fill()
+    actx.beginPath()
+    actx.fillStyle = "#33363f"
+    actx.arc(0,0,12,0,90,false)
+    actx.fill()
+    actx.beginPath()
+    actx.fillStyle = "#afbfaf"
+    actx.arc(0,0,10,0,90,false)
+    actx.fill()
+    actx.beginPath()
+    actx.fillStyle = "#fff5"
+    actx.arc(0,0,10,0,(player.scoreTimer/50)*Math.PI,false)
+    actx.moveTo(0,0)
+    actx.lineTo(10,0)
+    actx.lineTo(-Math.sin((player.scoreTimer/15.923566879)-1.57)*10,Math.cos((player.scoreTimer/15.923566879)-1.52)*10)
+    actx.fill()
+    for(let i = 0; i<player.jumps;i++){
+        actx.beginPath()
+        actx.fillStyle = "#33363f22"
+        actx.arc(Math.sin((i-2.5)/1.5)*12-2,Math.cos((i-2.5)/1.5)*12+2,5,0,90,false)
+        actx.fill()
+
+        actx.beginPath()
+        actx.fillStyle = "#33363f"
+        actx.arc(Math.sin((i-2.5)/1.5)*12,Math.cos((i-2.5)/1.5)*12,5,0,90,false)
+        actx.fill()
+        actx.beginPath()
+        actx.fillStyle = "#fff"
+        actx.arc(Math.sin((i-2.5)/1.5)*12,Math.cos((i-2.5)/1.5)*12,3,0,90,false)
+        actx.fill()
+    }
+    actx.restore()
+
 }
 
 function transferDraw(){
