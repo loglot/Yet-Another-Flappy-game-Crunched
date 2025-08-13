@@ -4,7 +4,7 @@ const acanvas = document.getElementById("screen")
 const actx = acanvas.getContext("2d")
 
 var display = {startWidth:1920, aspectRatio:[1920,1080], scale:0}
-var player = {x : 192/2, y : 108/2, velX:0, velY:0, targetX : 3, jumps:2, scoreTimer :0}
+var player = {x : 192/2, y : 108/2, velX:0, velY:0, targetX : 3, jumps:2, scoreTimer :0, score:0}
 var enemies = [{
     x:2,
     y:70,
@@ -13,6 +13,7 @@ var enemies = [{
 }]
 var enemyTimer = 10000
 var GameState = 0
+var highScore=0
 
 function SpawnEnemy(){
     enemies[enemies.length] = {
@@ -88,7 +89,7 @@ function enemyTick(){
     }
 }
 function reset(){
-     player = {x : 192/2, y : 108/2, velX:0, velY:0, targetX : 3, jumps:2, scoreTimer :0}
+     player = {x : 192/2, y : 108/2, velX:0, velY:0, targetX : 3, jumps:2, scoreTimer :0,score:0}
  enemies = [{
     x:2,
     y:70,
@@ -134,14 +135,29 @@ function drawMenu(){
     actx.font = "15px sans-serif";
     actx.strokeStyle = "#33363f"
     actx.lineWidth = 5;
-    
+    actx.textAlign = "left"
     actx.lineJoin = 'miter';
     actx.miterLimit = 2
     actx.strokeText("Yet Another Flappy Game", 10, 20)
     actx.strokeText("Press W To Start", 10, 45)
     actx.fillStyle = "#fff"
-    actx.fillText("Yet Another Flappy Game", 10, 20)
     actx.fillText("Press W To Start", 10, 45)
+    actx.fillText("Yet Another Flappy Game", 10, 20)
+
+    if(player.score>highScore){
+        highScore=player.score
+    }
+    if(highScore>0){
+        actx.strokeText(`HS:${highScore}`, 10, 90)
+        actx.fillText(`HS:${highScore}`, 10, 90)
+    actx.textAlign = "right"
+        actx.strokeText(`LS:${player.score}`, 183, 90)
+        actx.fillText(`LS:${player.score}`, 183, 90)
+
+    }
+    actx.textAlign = "left"
+        // actx.strokeText("High Score:", 10, 80)
+        // actx.fillText("High Score:", 10, 80)
 }
 
 function playerTick(){
@@ -174,6 +190,7 @@ function playerTick(){
     player.scoreTimer++
     if(player.scoreTimer>= 100){
         player.scoreTimer = 0
+        player.score++
     }
 
     if(player.y<14){
@@ -211,7 +228,7 @@ function drawGame(){
     }
 
     for(let i = 0; i<enemies.length; i++){
-        actx.fillRect(Math.round(((192/5)*(enemies[i].x+1))-40),enemies[i].y,39,15)
+        actx.fillRect(Math.round(((192/5)*(enemies[i].x+1))-40),Math.round(enemies[i].y),39,15)
 
     }
 
@@ -222,6 +239,11 @@ function drawGame(){
     actx.fillRect(0,0,1000,3)
     actx.fillRect(191-2,0,1000,1000)
     actx.fillRect(0,107-2,1000,1000)
+
+
+    actx.strokeText(`${player.score}`, 5, 17)
+    actx.fillStyle = "#fff"
+    actx.fillText(`${player.score}`, 5, 17)
 }
 
 function drawPlayer(){
