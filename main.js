@@ -15,12 +15,13 @@ var enemyTimer = 10000
 var GameState = 0
 var highScore=0
 
-function SpawnEnemy(){
+function SpawnEnemy(type=0){
     enemies[enemies.length] = {
         x:Math.floor(Math.random()*5),
         y:-50,
         speed: -(Math.random()/3)-.4,
-        hitTimer:0
+        hitTimer:0,
+        type:type
     }
 }
 function enemyTick(){
