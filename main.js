@@ -191,7 +191,7 @@ function drawGame(){
 
     }
 
-    drawplayer()
+    game.player.draw(actx)
 
     actx.fillStyle = "#33363f"
     actx.fillRect(0,0,3,1000)
@@ -205,46 +205,6 @@ function drawGame(){
     actx.fillText(`${game.player.score}`, 5, 17)
 }
 
-function drawplayer(){
-    actx.save()
-    actx.translate(Math.round(game.player.x),Math.round(game.player.y))
-    actx.beginPath()
-    actx.fillStyle = "#33363f22"
-    actx.arc(-2,2,12,0,90,false)
-    actx.fill()
-    actx.beginPath()
-    actx.fillStyle = "#33363f"
-    actx.arc(0,0,12,0,90,false)
-    actx.fill()
-    actx.beginPath()
-    actx.fillStyle = "#afbfaf"
-    actx.arc(0,0,10,0,90,false)
-    actx.fill()
-    actx.beginPath()
-    actx.fillStyle = "#fff5"
-    actx.arc(0,0,10,0,(game.player.scoreTimer/50)*Math.PI,false)
-    actx.lineTo(0,0)
-    actx.lineTo(10,0)
-    // actx.lineTo(-Math.sin((game.player.scoreTimer/15.923566879)-1.57)*10,Math.cos((game.player.scoreTimer/15.923566879)-1.52)*10)
-    actx.fill()
-    for(let i = 0; i<game.player.jumps;i++){
-        actx.beginPath()
-        actx.fillStyle = "#33363f22"
-        actx.arc(Math.sin((i-2.5)/1.5)*12-2,Math.cos((i-2.5)/1.5)*12+2,5,0,90,false)
-        actx.fill()
-
-        actx.beginPath()
-        actx.fillStyle = "#33363f"
-        actx.arc(Math.sin((i-2.5)/1.5)*12,Math.cos((i-2.5)/1.5)*12,5,0,90,false)
-        actx.fill()
-        actx.beginPath()
-        actx.fillStyle = "#fff"
-        actx.arc(Math.sin((i-2.5)/1.5)*12,Math.cos((i-2.5)/1.5)*12,3,0,90,false)
-        actx.fill()
-    }
-    actx.restore()
-
-}
 
 function transferDraw(){
     resize()
