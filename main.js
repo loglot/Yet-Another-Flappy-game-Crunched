@@ -4,7 +4,6 @@ const acanvas = document.getElementById("screen")
 const actx = acanvas.getContext("2d")
 
 var display = {startWidth:1920, aspectRatio:[1920,1080], scale:0}
-var player = {x : 192/2, y : 108/2, velX:0, velY:0, targetX : 3, jumps:2, scoreTimer :0, score:0}
 var enemies = [{
     x:2,
     y:70,
@@ -12,8 +11,9 @@ var enemies = [{
     hitTimer:0
 }]
 var enemyTimer = 10000
-var GameState = 0
 var highScore=0
+import { Game } from "./lib/imports.js"
+var game = new Game()
 
 function SpawnEnemy(type=0){
     enemies[enemies.length] = {
@@ -33,49 +33,49 @@ function enemyTick(){
         }
         if(enemies[i].hitTimer < 0){
             if(
-                player.x > Math.round(((192/5)*(enemies[i].x+1))-40) &&
-                player.x < Math.round(((192/5)*(enemies[i].x+1))-1) &&
-                player.y+12 < enemies[i].y +15 &&
-                player.y+12 > enemies[i].y 
+                game.player.x > Math.round(((192/5)*(enemies[i].x+1))-40) &&
+                game.player.x < Math.round(((192/5)*(enemies[i].x+1))-1) &&
+                game.player.y+12 < enemies[i].y +15 &&
+                game.player.y+12 > enemies[i].y 
 
             ){
-                player.velY=-2
-                if(player.jumps<2){
-                    player.jumps=2
+                game.player.velY=-2
+                if(game.player.jumps<2){
+                    game.player.jumps=2
                 }
             }
             if(
-                player.x > Math.round(((192/5)*(enemies[i].x+1))-40) &&
-                player.x < Math.round(((192/5)*(enemies[i].x+1))-1) &&
-                player.y-12 < enemies[i].y +15 &&
-                player.y-12 > enemies[i].y 
+                game.player.x > Math.round(((192/5)*(enemies[i].x+1))-40) &&
+                game.player.x < Math.round(((192/5)*(enemies[i].x+1))-1) &&
+                game.player.y-12 < enemies[i].y +15 &&
+                game.player.y-12 > enemies[i].y 
 
             ){
-                player.velY=2
+                game.player.velY=2
             }
             if(
-                player.x-12 > Math.round(((192/5)*(enemies[i].x+1))-40) &&
-                player.x-12 < Math.round(((192/5)*(enemies[i].x+1))-1) &&
-                player.y < enemies[i].y +15 &&
-                player.y > enemies[i].y 
+                game.player.x-12 > Math.round(((192/5)*(enemies[i].x+1))-40) &&
+                game.player.x-12 < Math.round(((192/5)*(enemies[i].x+1))-1) &&
+                game.player.y < enemies[i].y +15 &&
+                game.player.y > enemies[i].y 
 
             ){
-                if(player.targetX<5){
-                    player.velX+=2
-                    player.targetX+=1
+                if(game.player.targetX<5){
+                    game.player.velX+=2
+                    game.player.targetX+=1
                     enemies[i].hitTimer = 5
                 }
             }
             if(
-                player.x+12 > Math.round(((192/5)*(enemies[i].x+1))-40) &&
-                player.x+12 < Math.round(((192/5)*(enemies[i].x+1))-1) &&
-                player.y < enemies[i].y +15 &&
-                player.y > enemies[i].y 
+                game.player.x+12 > Math.round(((192/5)*(enemies[i].x+1))-40) &&
+                game.player.x+12 < Math.round(((192/5)*(enemies[i].x+1))-1) &&
+                game.player.y < enemies[i].y +15 &&
+                game.player.y > enemies[i].y 
 
             ){
-                if(player.targetX>1){
-                    player.velX-=2
-                    player.targetX-=1
+                if(game.player.targetX>1){
+                    game.player.velX-=2
+                    game.player.targetX-=1
                     enemies[i].hitTimer = 5
                 }
                 
@@ -90,7 +90,7 @@ function enemyTick(){
     }
 }
 function reset(){
-     player = {x : 192/2, y : 108/2, velX:0, velY:0, targetX : 3, jumps:2, scoreTimer :0,score:0}
+    game.player.reset()
  enemies = [{
     x:2,
     y:70,
@@ -106,11 +106,11 @@ window.onerror = function(msg, url, linenumber) {
 }
 function tick(){
     requestAnimationFrame(tick)
-    if(GameState==1){
-        playerTick()
+    if(game.state==1){
+        game.player.tick()
         enemyTick()
         drawGame()
-    } else if(GameState==0){
+    } else if(game.state==0){
         menuTick()
         drawMenu()
     }
@@ -120,7 +120,7 @@ function tick(){
 function menuTick(){
     if(justPressed(kd.W)){
         reset()
-        GameState=1
+        game.state=1
     }
 }
 function drawMenu(){
@@ -145,62 +145,20 @@ function drawMenu(){
     actx.fillText("Press W To Start", 10, 45)
     actx.fillText("Yet Another Flappy Game", 10, 20)
 
-    if(player.score>highScore){
-        highScore=player.score
+    if(game.player.score>highScore){
+        highScore=game.player.score
     }
     if(highScore>0){
         actx.strokeText(`HS:${highScore}`, 10, 90)
         actx.fillText(`HS:${highScore}`, 10, 90)
     actx.textAlign = "right"
-        actx.strokeText(`LS:${player.score}`, 183, 90)
-        actx.fillText(`LS:${player.score}`, 183, 90)
+        actx.strokeText(`LS:${game.player.score}`, 183, 90)
+        actx.fillText(`LS:${game.player.score}`, 183, 90)
 
     }
     actx.textAlign = "left"
         // actx.strokeText("High Score:", 10, 80)
         // actx.fillText("High Score:", 10, 80)
-}
-
-function playerTick(){
-    player.velY += .1
-    if(justPressed(kd.W)){
-        if(player.jumps>0){
-            player.jumps--
-            player.velY+=-4
-        }
-    }
-    if(justPressed(kd.A)){
-        if(player.targetX>1){
-
-            player.velX-=2
-            player.targetX-=1
-        
-        }
-    }
-    if(justPressed(kd.D)){
-        if(player.targetX<5){
-
-            player.velX+=2
-            player.targetX+=1
-    
-        }
-    }
-    player.y+=player.velY
-    player.x+=player.velX
-    player.velX*=.95
-    player.scoreTimer++
-    if(player.scoreTimer>= 100){
-        player.scoreTimer = 0
-        player.score++
-    }
-
-    if(player.y<14){
-        player.y=14
-        player.velY=0
-    }
-    if(player.y>140){
-        GameState=0
-    }
 }
 
 function justPressed(KDKEY){
@@ -233,7 +191,7 @@ function drawGame(){
 
     }
 
-    drawPlayer()
+    drawplayer()
 
     actx.fillStyle = "#33363f"
     actx.fillRect(0,0,3,1000)
@@ -242,14 +200,14 @@ function drawGame(){
     actx.fillRect(0,107-2,1000,1000)
 
 
-    actx.strokeText(`${player.score}`, 5, 17)
+    actx.strokeText(`${game.player.score}`, 5, 17)
     actx.fillStyle = "#fff"
-    actx.fillText(`${player.score}`, 5, 17)
+    actx.fillText(`${game.player.score}`, 5, 17)
 }
 
-function drawPlayer(){
+function drawplayer(){
     actx.save()
-    actx.translate(Math.round(player.x),Math.round(player.y))
+    actx.translate(Math.round(game.player.x),Math.round(game.player.y))
     actx.beginPath()
     actx.fillStyle = "#33363f22"
     actx.arc(-2,2,12,0,90,false)
@@ -264,12 +222,12 @@ function drawPlayer(){
     actx.fill()
     actx.beginPath()
     actx.fillStyle = "#fff5"
-    actx.arc(0,0,10,0,(player.scoreTimer/50)*Math.PI,false)
+    actx.arc(0,0,10,0,(game.player.scoreTimer/50)*Math.PI,false)
     actx.moveTo(0,0)
     actx.lineTo(10,0)
-    actx.lineTo(-Math.sin((player.scoreTimer/15.923566879)-1.57)*10,Math.cos((player.scoreTimer/15.923566879)-1.52)*10)
+    actx.lineTo(-Math.sin((game.player.scoreTimer/15.923566879)-1.57)*10,Math.cos((game.player.scoreTimer/15.923566879)-1.52)*10)
     actx.fill()
-    for(let i = 0; i<player.jumps;i++){
+    for(let i = 0; i<game.player.jumps;i++){
         actx.beginPath()
         actx.fillStyle = "#33363f22"
         actx.arc(Math.sin((i-2.5)/1.5)*12-2,Math.cos((i-2.5)/1.5)*12+2,5,0,90,false)
