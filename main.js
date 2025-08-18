@@ -223,9 +223,9 @@ function drawplayer(){
     actx.beginPath()
     actx.fillStyle = "#fff5"
     actx.arc(0,0,10,0,(game.player.scoreTimer/50)*Math.PI,false)
-    actx.moveTo(0,0)
+    actx.lineTo(0,0)
     actx.lineTo(10,0)
-    actx.lineTo(-Math.sin((game.player.scoreTimer/15.923566879)-1.57)*10,Math.cos((game.player.scoreTimer/15.923566879)-1.52)*10)
+    // actx.lineTo(-Math.sin((game.player.scoreTimer/15.923566879)-1.57)*10,Math.cos((game.player.scoreTimer/15.923566879)-1.52)*10)
     actx.fill()
     for(let i = 0; i<game.player.jumps;i++){
         actx.beginPath()
