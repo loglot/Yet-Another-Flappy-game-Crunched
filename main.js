@@ -1,114 +1,30 @@
-const canvas = document.getElementById("display")
-const ctx = canvas.getContext("2d")
-const acanvas = document.getElementById("screen")
-const actx = acanvas.getContext("2d")
-
-var display = {startWidth:1920, aspectRatio:[1920,1080], scale:0}
-var enemies = [{
-    x:2,
-    y:70,
-    speed: -.1,
-    hitTimer:0
-}]
-var enemyTimer = 10000
-var highScore=0
-import { Game } from "./lib/imports.js"
-var game = new Game()
-
-function SpawnEnemy(type=0){
-    enemies[enemies.length] = {
-        x:Math.floor(Math.random()*5),
-        y:-50,
-        speed: -(Math.random()/3)-.4,
-        hitTimer:0,
-        type:type
-    }
-}
-function enemyTick(){
-    for(let i = 0; i<enemies.length; i++){
-        enemies[i].y-=enemies[i].speed
-        enemies[i].hitTimer--
-        if(enemies[i].y >= 120){
-            enemies.splice(i,1)
-        }
-        if(enemies[i].hitTimer < 0){
-            if(
-                game.player.x > Math.round(((192/5)*(enemies[i].x+1))-40) &&
-                game.player.x < Math.round(((192/5)*(enemies[i].x+1))-1) &&
-                game.player.y+12 < enemies[i].y +15 &&
-                game.player.y+12 > enemies[i].y 
-
-            ){
-                game.player.velY=-2
-                if(game.player.jumps<2){
-                    game.player.jumps=2
-                }
-            }
-            if(
-                game.player.x > Math.round(((192/5)*(enemies[i].x+1))-40) &&
-                game.player.x < Math.round(((192/5)*(enemies[i].x+1))-1) &&
-                game.player.y-12 < enemies[i].y +15 &&
-                game.player.y-12 > enemies[i].y 
-
-            ){
-                game.player.velY=2
-            }
-            if(
-                game.player.x-12 > Math.round(((192/5)*(enemies[i].x+1))-40) &&
-                game.player.x-12 < Math.round(((192/5)*(enemies[i].x+1))-1) &&
-                game.player.y < enemies[i].y +15 &&
-                game.player.y > enemies[i].y 
-
-            ){
-                if(game.player.targetX<5){
-                    game.player.velX+=2
-                    game.player.targetX+=1
-                    enemies[i].hitTimer = 5
-                }
-            }
-            if(
-                game.player.x+12 > Math.round(((192/5)*(enemies[i].x+1))-40) &&
-                game.player.x+12 < Math.round(((192/5)*(enemies[i].x+1))-1) &&
-                game.player.y < enemies[i].y +15 &&
-                game.player.y > enemies[i].y 
-
-            ){
-                if(game.player.targetX>1){
-                    game.player.velX-=2
-                    game.player.targetX-=1
-                    enemies[i].hitTimer = 5
-                }
-                
-            }
-        }
-    }
-    enemyTimer++
-    if(enemyTimer>50){
-
-        SpawnEnemy()
-        enemyTimer=0
-    }
-}
-function reset(){
-    game.player.reset()
- enemies = [{
-    x:2,
-    y:70,
-    speed: -.1,
-    hitTimer:0
-}]
- enemyTimer = 10000
-}
 
 window.onerror = function(msg, url, linenumber) {
     alert('Error message: '+msg+'\nURL: '+url+'\nLine Number: '+linenumber);
     return true;
 }
+
+const canvas = document.getElementById("display")
+const ctx = canvas.getContext("2d")
+const acanvas = document.getElementById("screen")
+const actx = acanvas.getContext("2d")
+var display = {startWidth:1920, aspectRatio:[1920,1080], scale:0}
+
+var highScore=0
+import { Game } from "./lib/imports.js"
+var game = new Game()
+
+function reset(){
+    game.player.reset()
+    game.platforms.reset()
+}
+
 function tick(){
     requestAnimationFrame(tick)
     if(game.state==1){
         game.player.tick()
-        enemyTick()
+        game.platforms.tick()
+        // enemyTick()
         drawGame()
     } else if(game.state==0){
         menuTick()
@@ -186,11 +102,12 @@ function drawGame(){
 
     }
 
-    for(let i = 0; i<enemies.length; i++){
-        actx.fillRect(Math.round(((192/5)*(enemies[i].x+1))-40),Math.round(enemies[i].y),39,15)
+    // for(let i = 0; i<enemies.length; i++){
+    //     actx.fillRect(Math.round(((192/5)*(enemies[i].x+1))-40),Math.round(enemies[i].y),39,15)
 
-    }
-
+    // }
+    
+    game.platforms.draw(actx)
     game.player.draw(actx)
 
     actx.fillStyle = "#33363f"
