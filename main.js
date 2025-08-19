@@ -10,7 +10,6 @@ const acanvas = document.getElementById("screen")
 const actx = acanvas.getContext("2d")
 var display = {startWidth:1920, aspectRatio:[1920,1080], scale:0}
 
-var highScore=0
 import { Game } from "./lib/imports.js"
 var game = new Game()
 
@@ -18,7 +17,9 @@ function reset(){
     game.player.reset()
     game.platforms.reset()
 }
-
+function init(){
+    game.highScore=game.cookies.get("HS")
+}
 function tick(){
     requestAnimationFrame(tick)
     if(game.state==1){
@@ -61,12 +62,14 @@ function drawMenu(){
     actx.fillText("Press W To Start", 10, 45)
     actx.fillText("Yet Another Flappy Game", 10, 20)
 
-    if(game.player.score>highScore){
-        highScore=game.player.score
+    if(game.player.score>game.highScore){
+        game.highScore=game.player.score
+        game.cookies.set("HS", game.highScore)
     }
-    if(highScore>0){
-        actx.strokeText(`HS:${highScore}`, 10, 90)
-        actx.fillText(`HS:${highScore}`, 10, 90)
+    
+    if(game.highScore>0){
+        actx.strokeText(`HS:${game.highScore}`, 10, 90)
+        actx.fillText(`HS:${game.highScore}`, 10, 90)
     actx.textAlign = "right"
         actx.strokeText(`LS:${game.player.score}`, 183, 90)
         actx.fillText(`LS:${game.player.score}`, 183, 90)
@@ -147,4 +150,5 @@ function resize(){
     ctx.scale(ctx.canvas.width/display.startWidth,ctx.canvas.width/display.startWidth)
     display.scale=ctx.canvas.width/display.startWidth
 }
+init()
 requestAnimationFrame(tick)
