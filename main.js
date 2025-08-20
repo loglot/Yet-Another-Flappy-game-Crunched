@@ -31,8 +31,8 @@ function tick(){
         game.display.drawMenu()
     }
     game.display.transferDraw()
-    game.display.drawSmooth()
     game.display.tick()
+    game.display.drawSmooth()
 }
 
 function menuTick(){
