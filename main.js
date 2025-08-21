@@ -12,35 +12,26 @@ const actx = acanvas.getContext("2d")
 import { Game } from "./lib/imports.js"
 var game = new Game()
 
-function reset(){
-    game.player.reset()
-    game.platforms.reset()
-}
 function init(){
     game.highScore=game.cookies.get("HS")
 }
 function tick(){
     requestAnimationFrame(tick)
+    game.display.drawBackground()
     if(game.state==1){
         game.player.tick()
         game.platforms.tick()
-        // enemyTick()
         game.display.drawGame()
+        game.achievement.tick()
     } else if(game.state==0){
-        menuTick()
-        game.display.drawMenu()
+        game.menu.tick()
+        game.menu.draw(actx)
     }
     game.display.transferDraw()
     game.display.tick()
     game.display.drawSmooth()
 }
 
-function menuTick(){
-    if(justPressed(kd.W)){
-        reset()
-        game.state=1
-    }
-}
 
 
 function justPressed(KDKEY){
