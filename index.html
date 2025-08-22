@@ -42,8 +42,6 @@
     }
     body {
         margin: 0;   
-        margin-left: auto;
-        margin-right: auto;
         background-color: black;
     }
     .padding {
@@ -52,21 +50,25 @@
         padding:10px
 
     }
-    .invisable {
+    .invisible {
     opacity:0; 
     position:absolute;
+  }
+  .display{
+    outline-width: 5px;
+    outline-style:solid;
   }
 </style>
 <head></head>
 <body></body>
 <div class="padding">
-    <canvas id="screen" width="192" height="108"class="invisable" >
-        you need javascript, though you already knew that, didn't you?
-    </canvas>
-    <canvas id="display" width="1920" height="1080" >
+    <canvas id="display" width="1920" height="1080" class="display">
         you need javascript, though you already knew that, didn't you?
     </canvas>
 </div>
+    <canvas id="screen" width="192" height="108"class="invisible" >
+        you need javascript, though you already knew that, didn't you?
+    </canvas>
 
 <script type="module" src="keydrown.js"></script>
 <script type="module" src="main.js" ></script>
