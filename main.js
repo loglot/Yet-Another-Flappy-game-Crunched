@@ -13,7 +13,7 @@ import { Game } from "./lib/imports.js"
 var game = new Game()
 
 function init(){
-    game.highScore=game.cookies.get("HS")
+    game.init()
 }
 function tick(){
     requestAnimationFrame(tick)
