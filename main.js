@@ -1,8 +1,8 @@
 
-window.onerror = function(msg, url, linenumber) {
-    alert('Error message: '+msg+'\nURL: '+url+'\nLine Number: '+linenumber);
-    return true;
-}
+// window.onerror = function(msg, url, linenumber) {
+//     alert('Error message: '+msg+'\nURL: '+url+'\nLine Number: '+linenumber);
+//     return true;
+// }
 
 const canvas = document.getElementById("display")
 const ctx = canvas.getContext("2d")
